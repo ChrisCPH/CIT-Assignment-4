@@ -20,8 +20,12 @@ export interface TranscriptRow {
  * here as a rejected promise. Let it travel on: this one throws.
  */
 export async function transcriptOf(studentId: string): Promise<TranscriptRow[]> {
-  // TODO
-  throw new Error('not implemented');
+  const result = await pool.query(
+    'SELECT * FROM student_transcript($1)',
+    [studentId]
+  );
+
+  return result.rows;
 }
 
 /**
@@ -33,9 +37,22 @@ export async function transcriptOf(studentId: string): Promise<TranscriptRow[]> 
  * a syntax error in your SQL is not "no such student".
  */
 export async function transcriptOrUndefined(
-  studentId: string): Promise<TranscriptRow[] | undefined> {
-  // TODO
-  throw new Error('not implemented');
+  studentId: string
+): Promise<TranscriptRow[] | undefined> {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM student_transcript($1)',
+      [studentId]
+    );
+
+    return result.rows;
+  } catch (err: any) {
+    if (err.code === 'P0001') {
+      return undefined;
+    }
+
+    throw err;
+  }
 }
 
 /**
@@ -50,7 +67,12 @@ export async function transcriptOrUndefined(
  */
 export async function enrolWithProcedure(
   studentId: string, courseId: string, secId: string,
-  semester: string, year: number): Promise<number> {
-  // TODO
-  throw new Error('not implemented');
+  semester: string, year: number
+): Promise<number> {
+  const result = await pool.query(
+    'CALL enrol_student($1, $2, $3, $4, $5, NULL)',
+    [studentId, courseId, secId, semester, year]
+  );
+
+  return Number(result.rows[0].new_total);
 }
