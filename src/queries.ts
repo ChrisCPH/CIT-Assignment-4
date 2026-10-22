@@ -84,7 +84,7 @@ export async function studentsIn(deptName: string): Promise<Student[]> {
  *     SELECT ..., danish_grade(t.grade) AS grade
  */
 export async function coursesFor(studentId: string): Promise<CourseRow[]> {
-  const result = await pool.query(
+  const { rows } = await pool.query(
     `SELECT c.course_id AS "courseId", c.title, danish_grade(t.grade) AS grade
      FROM takes t
      JOIN course c ON t.course_id = c.course_id
@@ -92,7 +92,7 @@ export async function coursesFor(studentId: string): Promise<CourseRow[]> {
      ORDER BY c.course_id`,
     [studentId]
   );
-  return result.rows;
+  return rows;
 }
 
 // --- A3. Aggregating ------------------------------------------------------
@@ -132,5 +132,5 @@ export async function deleteStudent(id: string): Promise<boolean> {
      WHERE id = $1`,
     [id]
   );
-  return result.rowCount! > 0;
+  return (result.rowCount ?? 0) > 0;
 }

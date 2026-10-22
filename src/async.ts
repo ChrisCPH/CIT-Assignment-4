@@ -19,7 +19,7 @@ export interface Overview {
  * try/catch or with a check, and say in a comment which you chose and why.
  */
 export async function firstCourseTitle(studentId: string): Promise<string | undefined> {
-  // Used a check
+  // Used a check because a missing student is an expected case and a try catch might hide unrelated errors
   const student = await findStudent(studentId);
 
   if (!student) {
@@ -28,11 +28,7 @@ export async function firstCourseTitle(studentId: string): Promise<string | unde
   
   const courses = await coursesFor(studentId);
 
-  if (courses.length === 0) {
-    return undefined;
-  }
-
-  return courses[0].title;
+  return courses[0]?.title;
 }
 
 // --- C2. Steps that do not depend on each other ---------------------------

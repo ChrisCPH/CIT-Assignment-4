@@ -21,7 +21,7 @@ export interface TranscriptRow {
  */
 export async function transcriptOf(studentId: string): Promise<TranscriptRow[]> {
   const result = await pool.query(
-    'SELECT * FROM student_transcript($1)',
+    'SELECT course_id AS "courseId", title, grade FROM student_transcript($1)',
     [studentId]
   );
 
@@ -41,16 +41,16 @@ export async function transcriptOrUndefined(
 ): Promise<TranscriptRow[] | undefined> {
   try {
     const result = await pool.query(
-      'SELECT * FROM student_transcript($1)',
+      'SELECT course_id AS "courseId", title, grade FROM student_transcript($1)',
       [studentId]
     );
 
     return result.rows;
+
   } catch (err: any) {
     if (err.code === 'P0001') {
       return undefined;
     }
-
     throw err;
   }
 }

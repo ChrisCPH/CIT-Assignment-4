@@ -92,12 +92,9 @@ BEGIN
 
   UPDATE student
   SET tot_cred = tot_cred + v_credits
-  WHERE id = p_id;
+  WHERE id = p_id
 
-  SELECT tot_cred
-  INTO new_total
-  FROM student
-  WHERE id = p_id;
+  RETURNING tot_cred INTO new_total;
 END;
 $$;
 
